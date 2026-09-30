@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل فيلم-شوو PRO</title>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
+        .player-wrapper { 
+            position: relative; 
+            padding-top: 56.25%; 
+            width: 100%; 
+            background: #000; 
+            box-shadow: 0 0 25px rgba(255, 75, 43, 0.5);
+        }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .server-list { display: flex; justify-content: center; gap: 12px; padding: 20px; flex-wrap: wrap; }
+        .s-btn { 
+            padding: 12px 22px; 
+            background: #111; 
+            color: #fff; 
+            border: 2px solid #ff4b2b; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s;
+        }
+        .s-btn.active { background: #ff4b2b; box-shadow: 0 0 15px rgba(255, 75, 43, 0.6); }
+        /* ستايل زرار التحميل الجديد */
+        .dl-btn { 
+            background: #27ae60; 
+            border: 2px solid #2ecc71; 
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+        .dl-btn:hover { background: #2ecc71; }
+        .hint { color: #2ecc71; font-size: 14px; margin: 10px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2 id="msg" style="padding:15px; color:#ff4b2b; margin-bottom:0;">السينما جاهزة يا كرانشي! 🍿</h2>
+    <div id="hint" class="hint">♡ استمتع يا وحش..</div>
+    
+    <div class="player-wrapper" id="playerContainer"></div>
+
+    <div class="server-list">
+        <button class="s-btn" onclick="startPlay(1, this)">🚀 سيرفر1(المميز)</button>
+        <button class="s-btn" onclick="startPlay(2, this)">🎥 سيرفر2(الوحش)</button>
+        <button class="s-btn" onclick="startPlay(3, this)">💎 سيرفر3(برايم)</button>
+    </div>
+
+    <a href="index.html" style="color:#666; text-decoration:none; display:block; margin-top:20px;">🔙 العودة للرئيسية</a>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const movieId = params.get('id');
+        const type = params.get('type') || 'movie';
+
+        function startPlay(num, btn) {
+            if (!movieId) return;
+            document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+
+            let url = "";
+            if (num === 1) {
+                // سيرفر 1: تم إضافة خاصية الترجمة التلقائية
+                url = `https://vidsrc.me/embed/${type === 'tv' ? 'tv' : 'movie'}?tmdb=${movieId}&sub.mode=auto`;
+            } else if (num === 2) {
+                // سيرفر 2: تم تعديل الرابط ليعمل بشكل صحيح (vidsrc.xyz الأكثر استقراراً)
+                url = `https://vidsrc.xyz/embed/${type}/${movieId}`;
+            } else {
+                // سيرفر 3: سيرفر vidsrc.to المستقر
+                url = `https://vidsrc.to/embed/${type}/${movieId}`;
+            }
+
+            document.getElementById('playerContainer').innerHTML = `
+                <iframe src="${url}" allowfullscreen referrerpolicy="origin"></iframe>`;
+            document.getElementById('msg').innerText = "مشاهدة ممتعة يا وحش! 🔥";
+        }
+
+        // وظيفة التحميل الخارجي
+        function downloadMovie() {
+            if (!movieId) return;
+            let downloadUrl = `https://vidsrc.xyz/download/${type}/${movieId}`;
+            window.open(downloadUrl, '_blank');
+        }
+
+        window.onload = () => {
+            const firstBtn = document.querySelector('.s-btn');
+            startPlay(1, firstBtn);
+        };
+    </script>
+</body>
+</html>
